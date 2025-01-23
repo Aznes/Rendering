@@ -11,7 +11,7 @@ int main()
         .fragment = gl::ShaderSource::File{"res/fragment.glsl"},
     }};
 
-    auto const rectangle_mesh = gl::Mesh{{
+    auto const square_mesh = gl::Mesh{{
         .vertex_buffers = {{
             .layout = {gl::VertexAttribute::Position2D{0}},
             .data   = {
@@ -34,7 +34,8 @@ int main()
 
         shader.bind(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
         shader.set_uniform("aspect_ratio", gl::framebuffer_aspect_ratio());
-        rectangle_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
+        shader.set_uniform("offset", gl::time_in_seconds());
+        square_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
         
     }
 }
