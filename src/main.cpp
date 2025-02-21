@@ -17,40 +17,45 @@ int main()
 
     auto const cube_mesh = gl::Mesh{{
         .vertex_buffers = {{
-            .layout = {gl::VertexAttribute::Position3D{0}},
-            .data   = {
-                
+            .layout = {gl::VertexAttribute::Position3D{0}, gl::VertexAttribute::UV{1}},
+            .data = {
+                // Position3D          |   UV Coordinates
                 // Front face
-                -0.5f, -0.5f, +0.5f,
-                +0.5f, -0.5f, +0.5f,
-                +0.5f, +0.5f, +0.5f,
-                -0.5f, +0.5f, +0.5f,
+                -0.5f, -0.5f, +0.5f, 0.0f, 0.0f, // Bottom-left-front
+                +0.5f, -0.5f, +0.5f, 1.0f, 0.0f, // Bottom-right-front
+                +0.5f, +0.5f, +0.5f, 1.0f, 1.0f, // Top-right-front
+                -0.5f, +0.5f, +0.5f, 0.0f, 1.0f, // Top-left-front
+
                 // Back face
-                -0.5f, -0.5f, -0.5f,
-                +0.5f, -0.5f, -0.5f,
-                +0.5f, +0.5f, -0.5f,
-                -0.5f, +0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-left-back
+                +0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-right-back
+                +0.5f, +0.5f, -0.5f, 0.0f, 1.0f, // Top-right-back
+                -0.5f, +0.5f, -0.5f, 1.0f, 1.0f, // Top-left-back
+
                 // Left face
-                -0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, +0.5f,
-                -0.5f, +0.5f, +0.5f,
-                -0.5f, +0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left-back
+                -0.5f, +0.5f, -0.5f, 1.0f, 0.0f, // Top-left-back
+                -0.5f, +0.5f, +0.5f, 1.0f, 1.0f, // Top-left-front
+                -0.5f, -0.5f, +0.5f, 0.0f, 1.0f, // Bottom-left-front
+
                 // Right face
-                +0.5f, -0.5f, -0.5f,
-                +0.5f, -0.5f, +0.5f,
-                +0.5f, +0.5f, +0.5f,
-                +0.5f, +0.5f, -0.5f,
+                +0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right-back
+                +0.5f, +0.5f, -0.5f, 0.0f, 0.0f, // Top-right-back
+                +0.5f, +0.5f, +0.5f, 0.0f, 1.0f, // Top-right-front
+                +0.5f, -0.5f, +0.5f, 1.0f, 1.0f, // Bottom-right-front
+
                 // Top face
-                -0.5f, +0.5f, +0.5f,
-                +0.5f, +0.5f, +0.5f,
-                +0.5f, +0.5f, -0.5f,
-                -0.5f, +0.5f, -0.5f,
+                -0.5f, +0.5f, -0.5f, 0.0f, 0.0f, // Top-left-back
+                +0.5f, +0.5f, -0.5f, 1.0f, 0.0f, // Top-right-back
+                +0.5f, +0.5f, +0.5f, 1.0f, 1.0f, // Top-right-front
+                -0.5f, +0.5f, +0.5f, 0.0f, 1.0f, // Top-left-front
+
                 // Bottom face
-                -0.5f, -0.5f, +0.5f,
-                +0.5f, -0.5f, +0.5f,
-                +0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-            }
+                -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // Bottom-left-back
+                +0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // Bottom-right-back
+                +0.5f, -0.5f, +0.5f, 0.0f, 0.0f, // Bottom-right-front
+                -0.5f, -0.5f, +0.5f, 1.0f, 0.0f, // Bottom-left-front
+            },
         }},
         .index_buffer = {
             // Front face
@@ -68,6 +73,20 @@ int main()
         }
     }};
 
+    auto const texture = gl::Texture{
+        gl::TextureSource::File{ // Peut être un fichier, ou directement un tableau de pixels
+            .path           = "res/texture.png",
+            .flip_y         = true, // Il n'y a pas de convention universelle sur la direction de l'axe Y. Les fichiers (.png, .jpeg) utilisent souvent une direction différente de celle attendue par OpenGL. Ce booléen flip_y est là pour inverser la texture si jamais elle n'apparaît pas dans le bon sens.
+            .texture_format = gl::InternalFormat::RGBA8, // Format dans lequel la texture sera stockée. On pourrait par exemple utiliser RGBA16 si on voulait 16 bits par canal de couleur au lieu de 8. (Mais ça ne sert à rien dans notre cas car notre fichier ne contient que 8 bits par canal, donc on ne gagnerait pas de précision). On pourrait aussi stocker en RGB8 si on ne voulait pas de canal alpha. On utilise aussi parfois des textures avec un seul canal (R8) pour des usages spécifiques.
+        },
+        gl::TextureOptions{
+            .minification_filter  = gl::Filter::Linear, // Comment on va moyenner les pixels quand on voit l'image de loin ?
+            .magnification_filter = gl::Filter::Linear, // Comment on va interpoler entre les pixels quand on zoom dans l'image ?
+            .wrap_x               = gl::Wrap::Repeat,   // Quelle couleur va-t-on lire si jamais on essaye de lire en dehors de la texture ?
+            .wrap_y               = gl::Wrap::Repeat,   // Idem, mais sur l'axe Y. En général on met le même wrap mode sur les deux axes.
+        }
+    };
+
     while (gl::window_is_open())
     {
         glEnable(GL_DEPTH_TEST); // Active le test de profondeur. C'est ce qui permet de ne pas dessiner les faces cachées par d'autres faces.
@@ -77,7 +96,7 @@ int main()
         shader.bind(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
         //shader.set_uniform("aspect_ratio", gl::framebuffer_aspect_ratio());
         shader.set_uniform("offset", gl::time_in_seconds());
-        cube_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
+        shader.set_uniform("my_texture", texture);
         
         glm::mat4 const view_matrix = camera.view_matrix();
         glm::mat4 const projection_matrix = glm::infinitePerspective(glm::radians(75.f) /*field of view in radians*/, gl::framebuffer_aspect_ratio() /*aspect ratio*/, 0.1f /*near plane*/);
@@ -88,7 +107,8 @@ int main()
         glm::mat4 const translation = glm::translate(glm::mat4{1.f}, glm::vec3{0.f, 1.f, 0.f} /* déplacement */);    
         
         glm::mat4 const model_view_projection_matrix = projection_matrix * view_matrix * translation * rotation;
-
+        
         shader.set_uniform("view_projection_matrix", model_view_projection_matrix);
+        cube_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
     }
 }
