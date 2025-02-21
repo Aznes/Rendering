@@ -1,10 +1,13 @@
 #include "opengl-framework/opengl-framework.hpp" // Inclue la librairie qui va nous servir à faire du rendu
+#include "glm/ext/matrix_clip_space.hpp" // Inclue la librairie qui va nous servir à créer des matrices de projection
 
 int main()
 {
     // Initialisation
     gl::init("TPs de Rendering"); // On crée une fenêtre et on choisit son nom
     gl::maximize_window(); // On peut la maximiser si on veut
+    auto camera = gl::Camera{};
+    gl::set_events_callbacks({camera.events_callbacks()});
 
     auto const shader = gl::Shader{{
         .vertex   = gl::ShaderSource::File{"res/vertex.glsl"},
@@ -33,9 +36,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT); // Exécute concrètement l'action d'appliquer sur tout l'écran la couleur choisie au-dessus
 
         shader.bind(); // On a besoin qu'un shader soit bind (i.e. "actif") avant de draw(). On en reparle dans la section d'après.
-        shader.set_uniform("aspect_ratio", gl::framebuffer_aspect_ratio());
+        //shader.set_uniform("aspect_ratio", gl::framebuffer_aspect_ratio());
         shader.set_uniform("offset", gl::time_in_seconds());
         square_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
         
+        glm::mat4 const view_matrix = camera.view_matrix();
+        glm::mat4 const projection_matrix = glm::infinitePerspective(glm::radians(75.f) /*field of view in radians*/, gl::framebuffer_aspect_ratio() /*aspect ratio*/, 0.1f /*near plane*/);
+    
+        shader.set_uniform("view_projection_matrix", projection_matrix * view_matrix);
     }
 }
