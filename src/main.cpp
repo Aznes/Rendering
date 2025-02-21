@@ -21,40 +21,40 @@ int main()
             .data = {
                 // Position3D          |   UV Coordinates
                 // Front face
-                -0.5f, -0.5f, +0.5f, 0.0f, 0.0f, // Bottom-left-front
-                +0.5f, -0.5f, +0.5f, 1.0f, 0.0f, // Bottom-right-front
-                +0.5f, +0.5f, +0.5f, 1.0f, 1.0f, // Top-right-front
-                -0.5f, +0.5f, +0.5f, 0.0f, 1.0f, // Top-left-front
+                -0.5f, -0.5f, +0.5f, -1.0f, -1.0f, // Bottom-left-front
+                +0.5f, -0.5f, +0.5f, 2.0f, -1.0f, // Bottom-right-front
+                +0.5f, +0.5f, +0.5f, 2.0f, 2.0f, // Top-right-front
+                -0.5f, +0.5f, +0.5f, -1.0f, 2.0f, // Top-left-front
 
                 // Back face
-                -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-left-back
-                +0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-right-back
-                +0.5f, +0.5f, -0.5f, 0.0f, 1.0f, // Top-right-back
-                -0.5f, +0.5f, -0.5f, 1.0f, 1.0f, // Top-left-back
+                -0.5f, -0.5f, -0.5f, 2.0f, -1.0f, // Bottom-left-back
+                +0.5f, -0.5f, -0.5f, -1.0f, -1.0f, // Bottom-right-back
+                +0.5f, +0.5f, -0.5f, -1.0f, 2.0f, // Top-right-back
+                -0.5f, +0.5f, -0.5f, 2.0f, 2.0f, // Top-left-back
 
                 // Left face
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // Bottom-left-back
-                -0.5f, +0.5f, -0.5f, 1.0f, 0.0f, // Top-left-back
-                -0.5f, +0.5f, +0.5f, 1.0f, 1.0f, // Top-left-front
-                -0.5f, -0.5f, +0.5f, 0.0f, 1.0f, // Bottom-left-front
+                -0.5f, -0.5f, -0.5f, -1.0f, -1.0f, // Bottom-left-back
+                -0.5f, +0.5f, -0.5f, 2.0f, -1.0f, // Top-left-back
+                -0.5f, +0.5f, +0.5f, 2.0f, 2.0f, // Top-left-front
+                -0.5f, -0.5f, +0.5f, -1.0f, 2.0f, // Bottom-left-front
 
                 // Right face
-                +0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // Bottom-right-back
-                +0.5f, +0.5f, -0.5f, 0.0f, 0.0f, // Top-right-back
-                +0.5f, +0.5f, +0.5f, 0.0f, 1.0f, // Top-right-front
-                +0.5f, -0.5f, +0.5f, 1.0f, 1.0f, // Bottom-right-front
+                +0.5f, -0.5f, -0.5f, 2.0f, -1.0f, // Bottom-right-back
+                +0.5f, +0.5f, -0.5f, -1.0f, -1.0f, // Top-right-back
+                +0.5f, +0.5f, +0.5f, -1.0f, 2.0f, // Top-right-front
+                +0.5f, -0.5f, +0.5f, 2.0f, 2.0f, // Bottom-right-front
 
                 // Top face
-                -0.5f, +0.5f, -0.5f, 0.0f, 0.0f, // Top-left-back
-                +0.5f, +0.5f, -0.5f, 1.0f, 0.0f, // Top-right-back
-                +0.5f, +0.5f, +0.5f, 1.0f, 1.0f, // Top-right-front
-                -0.5f, +0.5f, +0.5f, 0.0f, 1.0f, // Top-left-front
+                -0.5f, +0.5f, -0.5f, -1.0f, -1.0f, // Top-left-back
+                +0.5f, +0.5f, -0.5f, 2.0f, -1.0f, // Top-right-back
+                +0.5f, +0.5f, +0.5f, 2.0f, 2.0f, // Top-right-front
+                -0.5f, +0.5f, +0.5f, -1.0f, 2.0f, // Top-left-front
 
                 // Bottom face
-                -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // Bottom-left-back
-                +0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // Bottom-right-back
-                +0.5f, -0.5f, +0.5f, 0.0f, 0.0f, // Bottom-right-front
-                -0.5f, -0.5f, +0.5f, 1.0f, 0.0f, // Bottom-left-front
+                -0.5f, -0.5f, -0.5f, 2.0f, 2.0f, // Bottom-left-back
+                +0.5f, -0.5f, -0.5f, -1.0f, 2.0f, // Bottom-right-back
+                +0.5f, -0.5f, +0.5f, -1.0f, -1.0f, // Bottom-right-front
+                -0.5f, -0.5f, +0.5f, 2.0f, -1.0f, // Bottom-left-front
             },
         }},
         .index_buffer = {
@@ -82,8 +82,8 @@ int main()
         gl::TextureOptions{
             .minification_filter  = gl::Filter::Linear, // Comment on va moyenner les pixels quand on voit l'image de loin ?
             .magnification_filter = gl::Filter::Linear, // Comment on va interpoler entre les pixels quand on zoom dans l'image ?
-            .wrap_x               = gl::Wrap::Repeat,   // Quelle couleur va-t-on lire si jamais on essaye de lire en dehors de la texture ?
-            .wrap_y               = gl::Wrap::Repeat,   // Idem, mais sur l'axe Y. En général on met le même wrap mode sur les deux axes.
+            .wrap_x               = gl::Wrap::MirroredRepeat,   // Quelle couleur va-t-on lire si jamais on essaye de lire en dehors de la texture ?
+            .wrap_y               = gl::Wrap::MirroredRepeat,   // Idem, mais sur l'axe Y. En général on met le même wrap mode sur les deux axes.
         }
     };
 
@@ -109,6 +109,7 @@ int main()
         glm::mat4 const model_view_projection_matrix = projection_matrix * view_matrix * translation * rotation;
         
         shader.set_uniform("view_projection_matrix", model_view_projection_matrix);
+        
         cube_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
     }
 }
