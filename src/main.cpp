@@ -87,6 +87,39 @@ int main()
         }
     };
 
+    auto render_target = gl::RenderTarget{gl::RenderTarget_Descriptor{
+        .width          = gl::framebuffer_width_in_pixels(),
+        .height         = gl::framebuffer_height_in_pixels(),
+        .color_textures = {
+            gl::ColorAttachment_Descriptor{
+                .format  = gl::InternalFormat_Color::RGBA8,
+                .options = {
+                    .minification_filter  = gl::Filter::NearestNeighbour, // On va toujours afficher la texture à la taille de l'écran,
+                    .magnification_filter = gl::Filter::NearestNeighbour, // donc les filtres n'auront pas d'effet. Tant qu'à faire on choisit le moins coûteux.
+                    .wrap_x               = gl::Wrap::ClampToEdge,
+                    .wrap_y               = gl::Wrap::ClampToEdge,
+                },
+            },
+        },
+        .depth_stencil_texture = gl::DepthStencilAttachment_Descriptor{
+            .format  = gl::InternalFormat_DepthStencil::Depth32F,
+            .options = {
+                .minification_filter  = gl::Filter::NearestNeighbour,
+                .magnification_filter = gl::Filter::NearestNeighbour,
+                .wrap_x               = gl::Wrap::ClampToEdge,
+                .wrap_y               = gl::Wrap::ClampToEdge,
+            },
+        },
+    }};
+    
+    gl::set_events_callbacks({
+        camera.events_callbacks(),
+        {.on_framebuffer_resized = [&](gl::FramebufferResizedEvent const& e) {
+            if(e.width_in_pixels != 0 && e.height_in_pixels != 0) // OpenGL crash si on tente de faire une render target avec une taille de 0
+                render_target.resize(e.width_in_pixels, e.height_in_pixels);
+        }},
+    });
+
     while (gl::window_is_open())
     {
         glEnable(GL_DEPTH_TEST); // Active le test de profondeur. C'est ce qui permet de ne pas dessiner les faces cachées par d'autres faces.
@@ -110,6 +143,12 @@ int main()
         
         shader.set_uniform("view_projection_matrix", model_view_projection_matrix);
         
+        render_target.render([&]() {
+            glClearColor(1.f, 0.f, 0.f, 1.f); // Dessine du rouge, non pas à l'écran, mais sur notre render target
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // ... mettez tout votre code de rendu ici
+        });
+
         cube_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
     }
 }
