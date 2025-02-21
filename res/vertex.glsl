@@ -13,6 +13,6 @@ void main()
     position.x += offset;
     //position.x /= aspect_ratio;
     // ...
-    gl_Position = vec4(position, 0.4f, 1.0f); // Ici on utilise maintenant `position` et non plus `in_position`
+    //gl_Position = vec4(position, 0.4f, 1.0f); // Ici on utilise maintenant `position` et non plus `in_position`
     gl_Position = view_projection_matrix * vec4(in_position, 0., 1.);
 }

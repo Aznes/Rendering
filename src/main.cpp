@@ -42,7 +42,8 @@ int main()
         
         glm::mat4 const view_matrix = camera.view_matrix();
         glm::mat4 const projection_matrix = glm::infinitePerspective(glm::radians(75.f) /*field of view in radians*/, gl::framebuffer_aspect_ratio() /*aspect ratio*/, 0.1f /*near plane*/);
-    
-        shader.set_uniform("view_projection_matrix", projection_matrix * view_matrix);
+        glm::mat4 const orthogonal_projection_matrix = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 100.0f);
+
+        shader.set_uniform("view_projection_matrix", orthogonal_projection_matrix  * view_matrix);
     }
 }
