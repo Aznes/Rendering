@@ -11,5 +11,5 @@ uniform vec3 light_direction = normalize(vec3(0.2, 0.3, -1.));;
 void main()
 {
     vec4 texture_color = texture(my_texture, uv);
-    out_color = texture_color * dot(normalize(normal), light_direction);
+    out_color = texture_color * (clamp(dot(normalize(normal), light_direction),0 ,1) + 0.3);
 }
