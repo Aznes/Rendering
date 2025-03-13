@@ -17,5 +17,6 @@ void main()
     float squared_light_distance = distance(vertex_position, light_position) * distance(vertex_position, light_position);
     vec3 light_direction = normalize(vertex_position-light_position);
     vec4 lighted_color = texture_color * (light_intensity * clamp(-dot(normalize(normal), light_direction) / squared_light_distance,0 ,1) + 0.3);
-    out_color = lighted_color;
+    vec4 light_color = vec4(1., 0., 0., 0.);
+    out_color = lighted_color * light_color;
 }
