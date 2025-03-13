@@ -1,6 +1,51 @@
 #include "opengl-framework/opengl-framework.hpp" // Inclue la librairie qui va nous servir à faire du rendu
 #include "glm/ext/matrix_clip_space.hpp" // Inclue la librairie qui va nous servir à créer des matrices de projection
 #include "glm/ext/matrix_transform.hpp" // Inclue la librairie qui va nous servir à créer des matrices de transformation
+#include "iostream"
+
+auto load_mesh(std::filesystem::path const& path) -> gl::Mesh
+{
+    // On lit le fichier avec tinyobj
+    auto reader = tinyobj::ObjReader{};
+    reader.ParseFromFile(gl::make_absolute_path(path).string(), {});
+
+    if (!reader.Error().empty())
+        throw std::runtime_error("Failed to read 3D model:\n" + reader.Error());
+    if (!reader.Warning().empty())
+        std::cout << "Warning while reading 3D model:\n" + reader.Warning();
+
+    // On met tous les attributs dans un tableau
+    auto vertices = std::vector<float>{};
+    for (auto const& shape : reader.GetShapes())
+    {
+        for (auto const& idx : shape.mesh.indices)
+        {
+            // Position
+            vertices.push_back(reader.GetAttrib().vertices[3 * idx.vertex_index + 0]);
+            vertices.push_back(reader.GetAttrib().vertices[3 * idx.vertex_index + 2]);
+            vertices.push_back(reader.GetAttrib().vertices[3 * idx.vertex_index + 1]);
+
+            // UV
+            vertices.push_back(reader.GetAttrib().texcoords[2 * idx.texcoord_index + 0]);
+            vertices.push_back(reader.GetAttrib().texcoords[2 * idx.texcoord_index + 1]);
+
+            // Normale
+            vertices.push_back(reader.GetAttrib().normals[3 * idx.normal_index + 0]);
+            vertices.push_back(reader.GetAttrib().normals[3 * idx.normal_index + 2]);
+            vertices.push_back(reader.GetAttrib().normals[3 * idx.normal_index + 1]);
+        };
+    }
+
+    // TODO créer et return un gl::mesh, qui utilisera le tableau `vertices` en tant que `data` pour son vertex buffer.
+    // Attention, il faudra bien spécifier le layout pour qu'il corresponde à l'ordre des attributs dans le tableau `vertices`.
+
+    return gl::Mesh{{
+        .vertex_buffers = {{
+            .layout = {gl::VertexAttribute::Position3D{0}, gl::VertexAttribute::UV{1}, gl::VertexAttribute::Normal3D{2}},
+            .data = vertices,
+        }},
+    }};
+}
 
 int main()
 {
@@ -119,6 +164,9 @@ int main()
                 render_target.resize(e.width_in_pixels, e.height_in_pixels);
         }},
     });
+    
+    // Load le bato
+    auto boatMesh = load_mesh("res/bato/fourareen.obj");
 
     while (gl::window_is_open())
     {
@@ -149,6 +197,6 @@ int main()
             // ... mettez tout votre code de rendu ici
         });
 
-        cube_mesh.draw(); // C'est ce qu'on appelle un "draw call" : on envoie l'instruction à la carte graphique de dessiner notre mesh.
+        boatMesh.draw(); 
     }
 }
