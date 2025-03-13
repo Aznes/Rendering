@@ -189,8 +189,11 @@ int main()
         
         glm::mat4 const model_view_projection_matrix = projection_matrix * view_matrix * translation * rotation;
         
-        shader.set_uniform("view_projection_matrix", model_view_projection_matrix);
+        shader.set_uniform("view_projection_matrix_ws", model_view_projection_matrix);
         
+        shader.set_uniform("model_matrix_ws", translation * rotation);
+        shader.set_uniform("normal_matrix_ws", glm::inverse(glm::transpose( translation * rotation)));
+
         render_target.render([&]() {
             glClearColor(1.f, 0.f, 0.f, 1.f); // Dessine du rouge, non pas à l'écran, mais sur notre render target
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
